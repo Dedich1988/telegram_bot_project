@@ -47,10 +47,10 @@ def handle_section(message):
 
     for product in products:
         # Отправка информации о товаре и фотографии
-        # Примечание: URL фотографии будет зависеть от настроек сервера
-        photo_url = f"https://your-droplet-url.com/photos/{product.photo_filename}"
-
-        bot.send_photo(user_id, photo_url, caption=f"{product.name}\n{product.description}")
+        # Путь к фотографии находится в папке 'photo' в текущей директории
+        photo_path = f'photo/{product.photo_filename}'
+        with open(photo_path, 'rb') as photo:
+            bot.send_photo(user_id, photo, caption=f"{product.name}\n{product.description}")
 
 # Обработка всех остальных сообщений через Rivescript
 @bot.message_handler(func=lambda message: True)
