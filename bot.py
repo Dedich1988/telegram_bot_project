@@ -3,11 +3,17 @@ from telebot import types
 from decouple import config
 import pika
 import peewee
+import rivescript
 from database import Section, Product  # Импортируйте модели для разделов и товаров
-from peewee import SqliteDatabase
 
 # Подключение к базе данных (замените на свой путь и имя базы данных)
+from peewee import SqliteDatabase
 db = SqliteDatabase('my_database.db')
+
+# Создание экземпляра Rivescript
+rs = rivescript.RiveScript(utf8=True)
+rs.load_directory('rivescripts')
+rs.sort_replies()
 
 # Получение токена бота из .env файла
 BOT_TOKEN = config('BOT_TOKEN')
@@ -45,6 +51,18 @@ def handle_section(message):
         photo_url = f"https://your-droplet-url.com/photos/{product.photo_filename}"
 
         bot.send_photo(user_id, photo_url, caption=f"{product.name}\n{product.description}")
+
+# Обработка всех остальных сообщений через Rivescript
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
+    user_id = message.from_user.id
+    user_input = message.text
+
+    # Получение ответа от Rivescript
+    reply = rs.reply(str(user_id), user_input)
+
+    # Отправка ответа пользователю
+    bot.send_message(user_id, reply)
 
 # Запуск бота
 bot.polling(none_stop=True)
