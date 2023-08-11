@@ -15,6 +15,21 @@ class Product(BaseModel):
     description = TextField()
     photo_filename = CharField()
 
+
+from peewee import *
+
+db = SqliteDatabase('my_database.db')
+
+
+
+class Order(BaseModel):  # Добавляем определение класса Order
+    user_id = CharField()
+    description = TextField()
+
+#def create_test_data():
+    # Остальной код создания тестовых данных...
+
+#Создаем тестовые продукты в базе данных
 def create_test_data():
     with db.atomic():
         section1 = Section.create(name='Торты и пирожные')

@@ -3,7 +3,6 @@ from telebot import types
 from telebot.types import Message
 from decouple import config
 import pika
-import peewee
 import rivescript
 from database import Section, Product
 
@@ -56,15 +55,16 @@ def handle_help(message):
         "Привет! Я бот витрины кондитерской. Вот что я могу:\n"
         "/start - начать использование бота\n"
         "/menu - показать меню разделов\n"
-        "/help - показать это сообщение справки"
+        "/help - показать это сообщение справки\n"
+        "/заказ - оформить заказ"
     )
     bot.send_message(user_id, help_text)
 
 # Обработка команды /заказ
 @bot.message_handler(commands=['заказ'])
-def handle_order(message: Message):
+def handle_order_command(message: Message):
     user_id = message.from_user.id
-    bot.send_message(user_id, "Чтобы оформить заказ, введите описание продукта.")
+    bot.send_message(user_id, "Чтобы оформить заказ, введите описание продукта в формате 'Заказ: описание продукта'.")
 
 # Обработка описания продукта для заказа
 @bot.message_handler(func=lambda message: True, content_types=['text'])
@@ -77,7 +77,7 @@ def handle_order_description(message: Message):
         order_description = user_input.replace('Заказ:', '').strip()
 
         # Отправляем заказ в очередь RabbitMQ
-        send_order(f'Заказ: {order_description}')
+        send_order(f'Заказ: {user_id} {order_description}')
 
         # Отправляем подтверждение пользователю
         bot.send_message(user_id, f'Ваш заказ "{order_description}" принят!')
