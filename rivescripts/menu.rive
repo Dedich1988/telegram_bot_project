@@ -11,7 +11,7 @@
 < object
 
 + выбрать_раздел
-- {get_section_list}
+- {get_products_list}
 
 > object get_section_list python
     import menu
@@ -22,9 +22,6 @@
     return call_get_section_list(user, args)
 < object
 
-+ get_products_list
-- {get_products_list}
-
 > object get_products_list python
     import menu
 
@@ -34,18 +31,3 @@
 
     return call_get_products_list(user, args)
 < object
-
-+ заказ
-- {request_order_description}
-
-> object request_order_description python
-    import bot
-
-    def call_request_order_description(user, args):
-        return bot.request_order_description(user, args)
-
-    return call_request_order_description(user, args)
-< object
-
-+ *
-- Прости, я не понимаю твой запрос. Можешь попробовать еще раз?
