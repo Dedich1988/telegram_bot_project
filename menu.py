@@ -1,5 +1,5 @@
 from telebot import TeleBot, types
-
+from database import Section, Product
 
 from peewee import CharField, ForeignKeyField, TextField, Model
 from playhouse.db_url import connect
@@ -8,7 +8,7 @@ from playhouse.db_url import connect
 db = connect('sqlite:///my_database.db')
 
 
-def show_menu(user_id):
+def show_menu(user_id, bot):
     markup = types.ReplyKeyboardMarkup(row_width=2)
     sections = Section.select()
     section_buttons = [section.name for section in sections]

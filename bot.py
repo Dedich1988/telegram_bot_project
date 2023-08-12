@@ -18,22 +18,22 @@ BOT_TOKEN = config('BOT_TOKEN')
 # Настройка бота
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# Обработка описания продукта для заказа
-
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def handle_order(message: telebot.types.Message):
-    handle_order_description(bot, message, rs, in_order_process)   # Передача аргумента in_order_process
-
-# Обработка текстовых команд через RiveScript
+# Обработка описания продукта для заказа и текстовых команд через RiveScript
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_message(message: telebot.types.Message):
     user_id = message.from_user.id
     user_input = message.text
-    rs_reply = rs.reply(str(user_id), user_input)
 
+    # Обработка описания продукта для заказа
+    if user_input.startswith('/order'):
+        handle_order_description(bot, message, rs, in_order_process)   # Передача аргумента in_order_process
+        return
+
+    # Обработка текстовых команд через RiveScript
+    rs_reply = rs.reply(str(user_id), user_input)
     if rs_reply.startswith("{show_menu}"):
         # Вызов функции для отображения меню
-        show_menu(user_id)
+        show_menu(user_id, bot)
     elif rs_reply.startswith("{get_section_list}"):
         # Вызов функции для получения списка разделов
         section_list = get_section_list()
