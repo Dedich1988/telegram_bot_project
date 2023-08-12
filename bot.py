@@ -1,11 +1,9 @@
 import telebot
-from telebot import types
 from decouple import config
 import rivescript
-from order import send_order, handle_order_description
-from menu import show_menu, get_products_list  # Импорт функций из модуля menu
-
-in_order_process = {}
+from order import handle_order_description
+import menu
+from database import Section
 
 # Создание экземпляра Rivescript
 rs = rivescript.RiveScript(utf8=True)
@@ -26,23 +24,23 @@ def handle_message(message: telebot.types.Message):
 
     # Обработка описания продукта для заказа
     if user_input.startswith('/order'):
-        handle_order_description(bot, message, rs, in_order_process)   # Передача аргумента in_order_process
-        return
+        handle_order_description(bot, message, rs)
 
     # Обработка текстовых команд через RiveScript
     rs_reply = rs.reply(str(user_id), user_input)
-    if rs_reply.startswith("{show_menu}"):
-        # Вызов функции для отображения меню
-        show_menu(user_id, bot)
-    elif rs_reply.startswith("{get_section_list}"):
-        # Вызов функции для получения списка разделов
-        section_list = get_section_list()
-        bot.send_message(user_id, section_list)
-    elif rs_reply.startswith("{get_products_list}"):
-        # Вызов функции для получения списка продуктов
-        section_name = rs_reply.split()[1]  # Получаем имя раздела из ответа RiveScript
-        product_list = get_products_list(user_id, section_name)
-        bot.send_message(user_id, product_list)
+
+    # Вызов функций меню через маркеры RiveScript
+    if "{show_menu}" in rs_reply:
+        menu.show_menu(bot, message)
+
+    elif rs_reply.startswith("{show_products}"):
+        section_name = rs_reply.split()[1]
+        menu.show_products(bot, message, section_name)
+
+    # Добавляем проверку, если сообщение точно соответствует имени раздела
+    elif Section.select().where(Section.name == user_input).exists():
+        menu.show_products(bot, message, user_input)  # Вызов функции для отображения продуктов данной секции
+
     else:
         # Отправка ответа RiveScript пользователю
         bot.send_message(user_id, rs_reply)

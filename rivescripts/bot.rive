@@ -1,39 +1,29 @@
-+ начать
++ start
 - {show_menu}
 
 > object show_menu python
     import menu
 
     def call_show_menu(user, args):
-        return menu.show_menu(user)
+        return menu.show_menu(update, context)
 
     return call_show_menu(user, args)
 < object
 
-+ выбрать_раздел
-- {get_section_list}
-
-> object get_section_list python
-    import menu
-
-    def call_get_section_list(user, args):
-        return menu.get_section_list()
-
-    return call_get_section_list(user, args)
-< object
-
-+ get_products_list
-- {get_products_list}
++ select_section
+- {get_products_list <star>}
 
 > object get_products_list python
     import menu
 
     def call_get_products_list(user, args):
         section_name = args[1]
-        return menu.get_products_list(user, section_name)
+        return menu.show_products(update, context, bot, section_name)
 
     return call_get_products_list(user, args)
 < object
+
+
 
 + заказ
 - {request_order_description}
