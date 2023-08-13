@@ -8,6 +8,7 @@ class BaseModel(Model):
 
 class Section(BaseModel):
     name = CharField(unique=True)
+    photo_filename = CharField()  # Добавляем поле для хранения имени файла с фотографией
 
 class Product(BaseModel):
     section = ForeignKeyField(Section, backref='products')
@@ -15,22 +16,22 @@ class Product(BaseModel):
     description = TextField()
     photo_filename = CharField()
 
-
-class Order(BaseModel):  # Добавляем определение класса Order
+class Order(BaseModel):
     user_id = CharField()
     description = TextField()
 
+db.connect()
+# db.create_tables([Section, Product, Order])
 
-
-#Создаем тестовые продукты в базе данных
+# Создаем тестовые разделы с фотографиями в базе данных
+# Добавляем разделы в базу данных
 # def create_test_data():
 #     with db.atomic():
-#         section1 = Section.create(name='Торты и пирожные')
-#         section2 = Section.create(name='Печенье и выпечка')
+#         section1 = Section.create(name='Мед и продукты пчеловодства', photo_filename='menu/photo/honey.jpg')
+#         section2 = Section.create(name='Гусеводство', photo_filename='menu/photo/geese.jpg')
+#         section3 = Section.create(name='Виноградарство', photo_filename='menu/photo/grapes.jpg')
+#         section4 = Section.create(name='Разные товары', photo_filename='menu/photo/miscellaneous.jpg')
 #
-#         product1 = Product.create(section=section1, name='Торт "Шоколадное наслаждение"', description='Вкусный шоколадный торт', photo_filename='chocolate_cake.jpg')
-#         product2 = Product.create(section=section1, name='Пирожное "Тирамису"', description='Нежное пирожное с кофейным вкусом', photo_filename='tiramisu.jpg')
-#         product3 = Product.create(section=section2, name='Печенье "Овсянка"', description='Печенье с овсянкой и изюмом', photo_filename='oatmeal_cookies.jpg')
-
-db.connect()
-db.create_tables([Section, Product])
+#
+# # Вызываем функцию для создания тестовых данных
+# create_test_data()

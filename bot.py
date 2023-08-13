@@ -45,5 +45,11 @@ def handle_message(message: telebot.types.Message):
         # Отправка ответа RiveScript пользователю
         bot.send_message(user_id, rs_reply)
 
+# Обработка выбора секции через обработчик
+@bot.message_handler(func=lambda message: message.text in [section.name for section in Section.select()])
+def handle_section_choice(message):
+    section_name = message.text
+    menu.show_products(bot, message, section_name)
+
 # Запуск бота
 bot.polling(none_stop=True)
