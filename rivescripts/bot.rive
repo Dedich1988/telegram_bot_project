@@ -1,6 +1,21 @@
 + start
 - {show_menu}
 
++ menu
+- {show_menu}
+
++ help
+- Для навигации по меню, используйте команду /menu. Если вы хотите сделать заказ, отправьте сообщение с текстом "заказ".
+
++ заказ
+- {request_order_description}
+
++ (покажи ассортимент|просмотреть продукцию|открыть меню товаров|показать что есть в магазине)
+- {show_menu}
+
++ кто тебя создал
+- Добровольский Дмитрий Александрович создал меня. Вы можете узнать больше о нем на его [GitHub профиле](https://github.com/Dedich1988).
+
 > object show_menu python
     import menu
 
@@ -9,24 +24,6 @@
 
     return call_show_menu(user, args)
 < object
-
-+ select_section
-- {get_products_list <star>}
-
-> object get_products_list python
-    import menu
-
-    def call_get_products_list(user, args):
-        section_name = args[1]
-        return menu.show_products(update, context, bot, section_name)
-
-    return call_get_products_list(user, args)
-< object
-
-
-
-+ заказ
-- {request_order_description}
 
 > object request_order_description python
     import bot
