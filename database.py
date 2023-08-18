@@ -1,6 +1,13 @@
 from peewee import *
+from peewee import PostgresqlDatabase
 
-db = SqliteDatabase('my_database.db')
+db = PostgresqlDatabase(
+    'my_database',  # Название вашей PostgreSQL базы данных
+    user='your_db_user',  # Ваше имя пользователя PostgreSQL
+    password='your_db_password',  # Ваш пароль пользователя PostgreSQL
+    host='your_db_host'  # Адрес вашей PostgreSQL базы данных
+)
+
 
 class BaseModel(Model):
     class Meta:
