@@ -1,3 +1,5 @@
+import datetime
+
 from peewee import *
 from peewee import PostgresqlDatabase
 
@@ -28,10 +30,20 @@ class Order(BaseModel):
     user_id = CharField()
     description = TextField()
 
+class User(BaseModel):
+    user_id = CharField(unique=True)
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+class UserSession(BaseModel):
+    user = ForeignKeyField(User, backref='sessions')
+    context = TextField()
+    time_session = DateTimeField(default=datetime.datetime.now)
+
+
 db.connect()
 
 # Create tables if they don't exist
-db.create_tables([Section, Product, Order])
+db.create_tables([Section, Product, Order, User, UserSession])
 
 # Function to create test data
 # def create_test_data():

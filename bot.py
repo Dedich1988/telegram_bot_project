@@ -1,10 +1,11 @@
 import telebot
+import datetime
 from telebot import types
 from decouple import config
 import rivescript
 from order import handle_order_description
 import menu
-from database import Section, Product
+from database import Section, Product, User, UserSession
 
 # Создание экземпляра Rivescript
 rs = rivescript.RiveScript(utf8=True)
@@ -16,6 +17,21 @@ BOT_TOKEN = config('BOT_TOKEN')
 
 # Настройка бота
 bot = telebot.TeleBot(BOT_TOKEN)
+
+
+
+
+# В этой функции обработки команды /start или первого взаимодействия пользователя с ботом
+def handle_start(message):
+    user_id = str(message.from_user.id)
+    time_entered = datetime.datetime.now()
+
+    # Сохраняем данные пользователя в базе данных
+    User.create(user_id=user_id, created_at=datetime.datetime.now())  # Используйте created_at вместо time_entered
+
+
+
+
 
 # Обработка команд /start, /menu и /help
 @bot.message_handler(commands=['start', 'menu', 'help'])
@@ -41,10 +57,19 @@ def handle_commands(message):
 
 in_order_process = {}  # Initialize the in_order_process dictionary
 
+# ...
+
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_message(message: telebot.types.Message):
     user_id = message.from_user.id
     user_input = message.text
+
+    # Загружаем или создаем сессию
+    user, created = User.get_or_create(user_id=user_id)
+    session, _ = UserSession.get_or_create(user=user)
+
+    # Получаем контекст сессии
+    context = session.context
 
     if user_id in in_order_process and in_order_process[user_id]:
         handle_order_description(bot, message, rs, in_order_process)
@@ -67,5 +92,13 @@ def handle_message(message: telebot.types.Message):
             # Отправка ответа RiveScript пользователю
             bot.send_message(user_id, rs_reply)
 
+        # Сохраняем значение текста сообщения пользователя в качестве контекста
+        if context:
+            session.context = context + '\n' + user_input
+        else:
+            session.context = user_input
+        session.save()
+
 # Запуск бота
 bot.polling(none_stop=True)
+
