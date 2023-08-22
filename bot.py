@@ -6,11 +6,8 @@ import rivescript
 from order import handle_order_description
 import menu
 from database import Section, Product, User, UserSession
-
-# Создание экземпляра Rivescript
-rs = rivescript.RiveScript(utf8=True)
-rs.load_directory('rivescripts')
-rs.sort_replies()
+from rivescript.sessions import SessionManager
+from SessionManager import PostgresSessionManager
 
 # Получение токена бота из .env файла
 BOT_TOKEN = config('BOT_TOKEN')
@@ -18,8 +15,12 @@ BOT_TOKEN = config('BOT_TOKEN')
 # Настройка бота
 bot = telebot.TeleBot(BOT_TOKEN)
 
+# Создание экземпляра RiveScript с кастомным SessionManager
+rs = rivescript.RiveScript(utf8=True, session_manager=PostgresSessionManager())
 
-
+# Загрузка RiveScript файлов
+rs.load_directory('rivescripts')
+rs.sort_replies()
 
 # В этой функции обработки команды /start или первого взаимодействия пользователя с ботом
 def handle_start(message):
@@ -57,7 +58,7 @@ def handle_commands(message):
 
 in_order_process = {}  # Initialize the in_order_process dictionary
 
-# ...
+
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_message(message: telebot.types.Message):
